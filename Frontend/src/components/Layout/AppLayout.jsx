@@ -7,7 +7,7 @@ import {
   MenuFoldOutlined,
   UserOutlined,
 } from '@ant-design/icons'
-import { Avatar, Badge, ConfigProvider, Layout, Menu, Space, Typography } from 'antd'
+import { Avatar, Badge, Button, ConfigProvider, Layout, Menu, notification, Space, Typography } from 'antd'
 import '../../styles/Dashboard.css'
 
 const { Header, Content, Sider } = Layout
@@ -16,16 +16,28 @@ const { Text, Title } = Typography
 const pageTitles = { dashboard: 'Dashboard', products: 'Products', reports: 'Reports' }
 
 export default function AppLayout({ activePage, onNavigate, children }) {
+  const [notificationApi, notificationContext] = notification.useNotification()
+
+  const showLogoutConfirmation = () => {
+    notificationApi.open({
+      message: 'Are you sure you want to log out?',
+      description: 'Your current session will be ended.',
+      placement: 'topRight',
+      duration: 0,
+      actions: <Space><Button danger>Yes</Button><Button>No</Button></Space>,
+    })
+  }
+
   const menuItems = [
     { key: 'dashboard', icon: <DashboardOutlined />, label: 'Dashboard' },
     { key: 'products', icon: <BoxPlotOutlined />, label: 'Products' },
     { type: 'divider' },
     { key: 'reports', icon: <FileTextOutlined />, label: 'Reports' },
-    { key: 'logout', icon: <LogoutOutlined />, label: 'Logout' },
   ]
 
   return (
     <ConfigProvider theme={{ token: { colorPrimary: '#4263eb', borderRadius: 10, colorBgLayout: '#f6f8fb' } }}>
+      {notificationContext}
       <Layout className="dashboard-shell">
         <Sider breakpoint="lg" collapsedWidth="0" width={248} className="dashboard-sider">
           <div className="brand"><span className="brand-mark"><BoxPlotOutlined /></span><span>Stockwise</span></div>
@@ -34,8 +46,12 @@ export default function AppLayout({ activePage, onNavigate, children }) {
             mode="inline"
             selectedKeys={[activePage]}
             items={menuItems}
-            onClick={({ key }) => { if (key === 'dashboard' || key === 'products') onNavigate(key) }}
+            onClick={({ key }) => {
+              if (key === 'logout') showLogoutConfirmation()
+              if (key === 'dashboard' || key === 'products') onNavigate(key)
+            }}
           />
+          <Button className="logout-button" type="text" danger icon={<LogoutOutlined />} onClick={showLogoutConfirmation}>Logout</Button>
         </Sider>
         <Layout>
           <Header className="topbar">
