@@ -3,6 +3,7 @@ import { useState } from 'react'
 import AppLayout from './components/Layout/AppLayout.jsx'
 import DashboardPage from './components/pages/DashboardPage.jsx'
 import ProductsPage from './components/pages/ProductsPage.jsx'
+import ReportsPage from './components/pages/ReportsPage.jsx'
 
 const initialProducts = [
   { id: 1, name: 'Wireless Mouse', sku: 'WM-001', category: 'Electronics', stock: 24, price: 850 },
@@ -23,7 +24,9 @@ function App() {
 
   const page = activePage === 'products'
     ? <ProductsPage products={products} setProducts={setProducts} />
-    : <DashboardPage products={products} />
+    : activePage === 'reports'
+      ? <ReportsPage />
+      : <DashboardPage products={products} />
 
   return (
     <AppLayout activePage={activePage} onNavigate={setActivePage}>

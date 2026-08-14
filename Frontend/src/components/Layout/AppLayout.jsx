@@ -48,7 +48,7 @@ export default function AppLayout({ activePage, onNavigate, children }) {
             items={menuItems}
             onClick={({ key }) => {
               if (key === 'logout') showLogoutConfirmation()
-              if (key === 'dashboard' || key === 'products') onNavigate(key)
+              if (key === 'dashboard' || key === 'products' || key === 'reports') onNavigate(key)
             }}
           />
           <Button className="logout-button" type="text" danger icon={<LogoutOutlined />} onClick={showLogoutConfirmation}>Logout</Button>
