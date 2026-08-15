@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Form, Input, InputNumber, Modal, Popconfirm, Select, Space, Table, Tag, Typography } from 'antd'
+import { Button, Form, Input, InputNumber, Modal, Popconfirm, Space, Table, Tag, Typography } from 'antd'
 import { useState } from 'react'
 import '../../styles/Products.css'
 
@@ -33,7 +33,6 @@ export default function ProductsPage({ products, setProducts }) {
 
   const columns = [
     { title: 'PRODUCT', dataIndex: 'name', render: (name, row) => <div><Text strong>{name}</Text><div className="product-sku">SKU: {row.sku}</div></div> },
-    { title: 'CATEGORY', dataIndex: 'category' },
     { title: 'PRICE', dataIndex: 'price', render: (price) => `₱${price.toLocaleString()}` },
     { title: 'STOCK', dataIndex: 'stock', render: (stock) => `${stock} units` },
     { title: 'STATUS', dataIndex: 'stock', render: (stock) => { const status = getStockStatus(stock); return <Tag color={status.color}>{status.label}</Tag> } },
@@ -48,7 +47,6 @@ export default function ProductsPage({ products, setProducts }) {
         <Form form={form} layout="vertical" onFinish={saveProduct}>
           <Form.Item name="name" label="Product name" rules={[{ required: true, message: 'Enter the product name.' }]}><Input /></Form.Item>
           <Form.Item name="sku" label="SKU" rules={[{ required: true, message: 'Enter the SKU.' }]}><Input /></Form.Item>
-          <Form.Item name="category" label="Category" rules={[{ required: true, message: 'Select a category.' }]}><Select options={['Electronics', 'Accessories', 'Furniture', 'Stationery'].map((category) => ({ value: category, label: category }))} /></Form.Item>
           <div className="product-form-row"><Form.Item name="price" label="Price (₱)" rules={[{ required: true, message: 'Enter the price.' }]}><InputNumber min={0} className="full-width" /></Form.Item><Form.Item name="stock" label="Stock quantity" rules={[{ required: true, message: 'Enter the stock quantity.' }]}><InputNumber min={0} className="full-width" /></Form.Item></div>
         </Form>
       </Modal>
