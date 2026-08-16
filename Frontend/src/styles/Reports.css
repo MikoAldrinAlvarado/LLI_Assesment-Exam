@@ -2,3 +2,4 @@
 .reports-error { margin-bottom: 18px; }.reports-loading { align-items: center; background: #fff; border: 1px solid #ebeff5; border-radius: 10px; display: flex; height: 300px; justify-content: center; }
 @media (max-width: 1000px) { .report-summary-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 600px) { .reports-intro { align-items: flex-start; flex-direction: column; gap: 16px; }.report-summary-grid { grid-template-columns: 1fr; }.revenue-chart { min-width: 440px; }.weekly-report-card { overflow-x: auto; }.report-table-card .ant-card-body { padding-inline: 16px; } }
+@media (max-width: 420px) { .reports-intro .ant-btn { width: 100%; }.weekly-report-card .ant-card-head,.report-table-card .ant-card-head { padding-inline: 16px; } }

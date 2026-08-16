@@ -3,10 +3,11 @@ import {
   DashboardOutlined,
   FileTextOutlined,
   LogoutOutlined,
-  MenuFoldOutlined,
+  MenuOutlined,
   UserOutlined,
 } from '@ant-design/icons'
-import { Avatar, Button, ConfigProvider, Layout, Menu, notification, Space, Typography } from 'antd'
+import { Avatar, Button, ConfigProvider, Drawer, Layout, Menu, notification, Space, Typography } from 'antd'
+import { useState } from 'react'
 import '../../styles/Dashboard.css'
 
 const { Header, Content, Sider } = Layout
@@ -16,6 +17,7 @@ const pageTitles = { dashboard: 'Dashboard', products: 'Products', reports: 'Rep
 
 export default function AppLayout({ activePage, onNavigate, onLogout, children }) {
   const [notificationApi, notificationContext] = notification.useNotification()
+  const [isNavigationOpen, setIsNavigationOpen] = useState(false)
 
   const showLogoutConfirmation = () => {
     notificationApi.open({
@@ -35,27 +37,34 @@ export default function AppLayout({ activePage, onNavigate, onLogout, children }
     { key: 'reports', icon: <FileTextOutlined />, label: 'Reports' },
   ]
 
+  const handleNavigation = (key) => {
+    if (key === 'dashboard' || key === 'products' || key === 'reports') {
+      onNavigate(key)
+      setIsNavigationOpen(false)
+    }
+  }
+
+  const navigationContent = (
+    <>
+      <div className="brand"><span className="brand-mark"><BoxPlotOutlined /></span><span>Stockwise</span></div>
+      <Menu theme="dark" mode="inline" selectedKeys={[activePage]} items={menuItems} onClick={({ key }) => handleNavigation(key)} />
+      <Button className="logout-button" type="text" danger icon={<LogoutOutlined />} onClick={showLogoutConfirmation}>Logout</Button>
+    </>
+  )
+
   return (
     <ConfigProvider theme={{ token: { colorPrimary: '#4263eb', borderRadius: 10, colorBgLayout: '#f6f8fb' } }}>
       {notificationContext}
       <Layout className="dashboard-shell">
         <Sider breakpoint="lg" collapsedWidth="0" width={248} className="dashboard-sider">
-          <div className="brand"><span className="brand-mark"><BoxPlotOutlined /></span><span>Stockwise</span></div>
-          <Menu
-            theme="dark"
-            mode="inline"
-            selectedKeys={[activePage]}
-            items={menuItems}
-            onClick={({ key }) => {
-              if (key === 'logout') showLogoutConfirmation()
-              if (key === 'dashboard' || key === 'products' || key === 'reports') onNavigate(key)
-            }}
-          />
-          <Button className="logout-button" type="text" danger icon={<LogoutOutlined />} onClick={showLogoutConfirmation}>Logout</Button>
+          {navigationContent}
         </Sider>
+        <Drawer className="navigation-drawer" placement="left" width={260} open={isNavigationOpen} onClose={() => setIsNavigationOpen(false)} closable={false}>
+          {navigationContent}
+        </Drawer>
         <Layout>
           <Header className="topbar">
-            <MenuFoldOutlined className="mobile-menu" />
+            <Button className="mobile-menu" type="text" icon={<MenuOutlined />} aria-label="Open navigation" onClick={() => setIsNavigationOpen(true)} />
             <Title level={2} className="header-title">{pageTitles[activePage] || 'Dashboard'}</Title>
             <div className="topbar-spacer" />
             <Space size={18} className="topbar-actions"><Avatar size={36} icon={<UserOutlined />} /><div className="profile-copy"><Text strong>Admin</Text></div></Space>
