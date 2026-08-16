@@ -8,29 +8,46 @@ class AuthController {
       const { username, password } = request.body
 
       if (!username || !password) {
-        return response.status(400).json({ message: 'Username and password are required.' })
+        return response.status(400).json({
+          message: 'Username and password are required.'
+        })
       }
 
       const user = await UserModel.findByUsername(username)
 
       if (!user) {
-        return response.status(401).json({ message: 'Invalid username or password.' })
+        return response.status(401).json({
+          message: 'Invalid username or password.'
+        })
       }
 
-      const isPasswordValid = await bcrypt.compare(password, user.PasswordHash)
+      const isPasswordValid = await bcrypt.compare(
+        password,
+        user.PasswordHash
+      )
 
       if (!isPasswordValid) {
-        return response.status(401).json({ message: 'Invalid username or password.' })
+        return response.status(401).json({
+          message: 'Invalid username or password.'
+        })
       }
 
       if (!process.env.JWT_SECRET) {
-        throw new Error('JWT_SECRET is missing from the environment configuration.')
+        throw new Error(
+          'JWT_SECRET is missing from the environment configuration.'
+        )
       }
 
       const token = jwt.sign(
-        { userId: user.UserId, username: user.Username },
+        {
+          userId: user.UserId,
+          username: user.Username,
+          role: user.Role
+        },
         process.env.JWT_SECRET,
-        { expiresIn: '8h' },
+        {
+          expiresIn: '8h'
+        }
       )
 
       return response.status(200).json({
@@ -40,11 +57,15 @@ class AuthController {
           id: user.UserId,
           fullName: user.FullName,
           username: user.Username,
-        },
+          role: user.Role
+        }
       })
     } catch (error) {
       console.error('Login error:', error.message)
-      return response.status(500).json({ message: 'Unable to log in. Please try again.' })
+
+      return response.status(500).json({
+        message: 'Unable to log in. Please try again.'
+      })
     }
   }
 }

@@ -1,4 +1,4 @@
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
+import { DeleteOutlined, DownloadOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import { Alert, Button, Form, Input, InputNumber, Modal, Popconfirm, Space, Spin, Table, Tag, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 import '../../styles/Products.css'
@@ -96,6 +96,25 @@ export default function ProductsPage() {
     }
   }
 
+  const generateProductReport = () => {
+    const reportText = [
+      'STOCKWISE PRODUCT INVENTORY REPORT',
+      `Generated: ${new Date().toLocaleString('en-PH')}`,
+      '',
+      `Total products: ${products.length}`,
+      '',
+      'PRODUCT LIST',
+      ...products.map((product) => `${product.name} | SKU: ${product.sku} | Price: PHP ${Number(product.price).toLocaleString()} | Stock: ${product.stock} | Status: ${getStockStatus(product.stock).label}`),
+    ].join('\n')
+    const reportFile = new Blob([reportText], { type: 'text/plain;charset=utf-8' })
+    const fileUrl = URL.createObjectURL(reportFile)
+    const downloadLink = document.createElement('a')
+    downloadLink.href = fileUrl
+    downloadLink.download = 'stockwise-product-inventory-report.txt'
+    downloadLink.click()
+    URL.revokeObjectURL(fileUrl)
+  }
+
   const columns = [
     { title: 'PRODUCT', dataIndex: 'name', render: (name, row) => <div><Text strong>{name}</Text><div className="product-sku">SKU: {row.sku}</div></div> },
     { title: 'PRICE', dataIndex: 'price', render: (price) => `₱${price.toLocaleString()}` },
@@ -106,14 +125,14 @@ export default function ProductsPage() {
 
   return (
     <section className="products-page">
-      <div className="products-page-heading"><div><Text className="eyebrow">INVENTORY</Text><Text type="secondary" className="products-description">Manage your inventory products and stock levels.</Text></div><Button type="primary" size="large" icon={<PlusOutlined />} onClick={openCreateModal}>Add product</Button></div>
+      <div className="products-page-heading"><div><Text className="eyebrow">INVENTORY</Text><Text type="secondary" className="products-description">Manage your inventory products and stock levels.</Text></div><div className="products-actions"><Button className="generate-report-button" size="large" icon={<DownloadOutlined />} onClick={generateProductReport} disabled={isLoading || Boolean(error)}>Generate report</Button><Button type="primary" size="large" icon={<PlusOutlined />} onClick={openCreateModal}>Add product</Button></div></div>
       {error && <Alert className="products-error" message={error} type="error" showIcon />}
       {isLoading ? <div className="products-loading"><Spin size="large" /></div> : <Table className="products-table" columns={columns} dataSource={products} rowKey="id" pagination={{ pageSize: 8, showSizeChanger: false }} />}
       <Modal title={editingProduct ? 'Edit product' : 'Add product'} open={isModalOpen} onCancel={() => setIsModalOpen(false)} onOk={() => form.submit()} confirmLoading={isSaving} okText={editingProduct ? 'Save changes' : 'Add product'}>
         <Form form={form} layout="vertical" onFinish={saveProduct}>
           <Form.Item name="name" label="Product name" rules={[{ required: true, message: 'Enter the product name.' }]}><Input /></Form.Item>
           <Form.Item name="sku" label="SKU" rules={[{ required: true, message: 'Enter the SKU.' }]}><Input /></Form.Item>
-          <div className="product-form-row"><Form.Item name="price" label="Price (₱)" rules={[{ required: true, message: 'Enter the price.' }]}><InputNumber min={0} className="full-width" /></Form.Item><Form.Item name="stock" label="Stock quantity" rules={[{ required: true, message: 'Enter the stock quantity.' }]}><InputNumber min={0} className="full-width" /></Form.Item></div>
+          <div className="product-form-row"><Form.Item name="price" label="Price (₱)" rules={[{ required: true, message: 'Enter the price.' }]}><InputNumber min={0} controls={false} className="full-width" /></Form.Item><Form.Item name="stock" label="Stock quantity" rules={[{ required: true, message: 'Enter the stock quantity.' }]}><InputNumber min={0} className="full-width" /></Form.Item></div>
         </Form>
       </Modal>
     </section>

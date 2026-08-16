@@ -1,5 +1,4 @@
 import {
-  BellOutlined,
   BoxPlotOutlined,
   DashboardOutlined,
   FileTextOutlined,
@@ -7,7 +6,7 @@ import {
   MenuFoldOutlined,
   UserOutlined,
 } from '@ant-design/icons'
-import { Avatar, Badge, Button, ConfigProvider, Layout, Menu, notification, Space, Typography } from 'antd'
+import { Avatar, Button, ConfigProvider, Layout, Menu, notification, Space, Typography } from 'antd'
 import '../../styles/Dashboard.css'
 
 const { Header, Content, Sider } = Layout
@@ -15,16 +14,17 @@ const { Text, Title } = Typography
 
 const pageTitles = { dashboard: 'Dashboard', products: 'Products', reports: 'Reports' }
 
-export default function AppLayout({ activePage, onNavigate, children }) {
+export default function AppLayout({ activePage, onNavigate, onLogout, children }) {
   const [notificationApi, notificationContext] = notification.useNotification()
 
   const showLogoutConfirmation = () => {
     notificationApi.open({
-      message: 'Are you sure you want to log out?',
+      key: 'logout-confirmation',
+      title: 'Are you sure you want to log out?',
       description: 'Your current session will be ended.',
       placement: 'topRight',
       duration: 0,
-      actions: <Space><Button danger>Yes</Button><Button>No</Button></Space>,
+      actions: <Space><Button danger onClick={() => { notificationApi.destroy('logout-confirmation'); onLogout() }}>Yes</Button><Button onClick={() => notificationApi.destroy('logout-confirmation')}>No</Button></Space>,
     })
   }
 
@@ -58,7 +58,7 @@ export default function AppLayout({ activePage, onNavigate, children }) {
             <MenuFoldOutlined className="mobile-menu" />
             <Title level={2} className="header-title">{pageTitles[activePage] || 'Dashboard'}</Title>
             <div className="topbar-spacer" />
-            <Space size={18} className="topbar-actions"><Badge dot><BellOutlined className="notification" /></Badge><span className="topbar-divider" /><Avatar size={36} icon={<UserOutlined />} /><div className="profile-copy"><Text strong>Alex Morgan</Text><br /><Text>Administrator</Text></div></Space>
+            <Space size={18} className="topbar-actions"><Avatar size={36} icon={<UserOutlined />} /><div className="profile-copy"><Text strong>Admin</Text></div></Space>
           </Header>
           <Content className="dashboard-content">{children}</Content>
         </Layout>

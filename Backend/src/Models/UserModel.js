@@ -7,9 +7,15 @@ class UserModel {
       .request()
       .input('username', sql.NVarChar(50), username)
       .query(`
-        SELECT UserId, FullName, Username, PasswordHash
+        SELECT
+          UserId,
+          FullName,
+          Username,
+          PasswordHash,
+          Role
         FROM dbo.Users
-        WHERE Username = @username AND IsActive = 1
+        WHERE Username = @username
+          AND IsActive = 1
       `)
 
     return result.recordset[0] || null
